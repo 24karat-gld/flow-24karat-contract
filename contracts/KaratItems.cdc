@@ -182,10 +182,9 @@ pub contract KaratItems: NonFungibleToken {
     //
 	init() {
         // Set our named paths
-        //FIXME: REMOVE SUFFIX BEFORE RELEASE
-        self.CollectionStoragePath = /storage/KaratItemsCollection003
-        self.CollectionPublicPath = /public/KaratItemsCollection003
-        self.MinterStoragePath = /storage/KaratItemsMinter003
+        self.CollectionStoragePath = /storage/KaratItemsCollection
+        self.CollectionPublicPath = /public/KaratItemsCollection
+        self.MinterStoragePath = /storage/KaratItemsMinter
 
         // Initialize the total supply
         self.totalSupply = 0

@@ -301,7 +301,7 @@ pub contract KaratItemsMarket {
 
     init () {
         //FIXME: REMOVE SUFFIX BEFORE RELEASE
-        self.CollectionStoragePath = /storage/KaratItemsMarketCollection003
-        self.CollectionPublicPath = /public/KaratItemsMarketCollection003
+        self.CollectionStoragePath = /storage/KaratItemsMarketCollection
+        self.CollectionPublicPath = /public/KaratItemsMarketCollection
     }
 }
