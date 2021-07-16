@@ -32,7 +32,7 @@ This repository is only for the open-sourced smart contracts. It also contains t
 
 The wallet is hosted in the backend server. We will take responsibility to keep our client's wallets carefully and safely for this stage. which means we will cover all blockchain-related fees for our clients.
 
-## 💎 What are 24Karat collection?
+## 💎 What are [24Karat](https://www.24karat.io) collection?
 
 24Karat collection is an Arts NFT ( [non-fungible tokens](https://github.com/onflow/flow-nft) ) marketplace, which is stored on the Flow blockchain.
 
