@@ -159,7 +159,6 @@ pub contract Karatv2: FungibleToken {
 
     init() {
         // Set our named paths.
-        //FIXME: REMOVE SUFFIX BEFORE RELEASE
         self.VaultStoragePath = /storage/karatv2Vault
         self.ReceiverPublicPath = /public/karatv2Receiver
         self.BalancePublicPath = /public/karatv2Balance
