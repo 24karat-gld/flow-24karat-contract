@@ -1,20 +1,24 @@
 import NonFungibleToken from "../../contracts/NonFungibleToken.cdc"
-import KaratItems from "../../contracts/KaratItems.cdc"
+import KaratNFT from "../../contracts/KaratNFT.cdc"
 
-// This transaction transfers a Karat Item from one account to another.
+// This transaction is for transferring and NFT from
+// one account to another
 
 transaction(recipient: Address, withdrawID: UInt64) {
-    prepare(signer: AuthAccount) {
-        
+
+    prepare(acct: AuthAccount) {
+
         // get the recipients public account object
         let recipient = getAccount(recipient)
 
         // borrow a reference to the signer's NFT collection
-        let collectionRef = signer.borrow<&KaratItems.Collection>(from: KaratItems.CollectionStoragePath)
+        let collectionRef = acct.borrow<&KaratNFT.Collection>(from: /storage/NFTCollection)
             ?? panic("Could not borrow a reference to the owner's collection")
 
         // borrow a public reference to the receivers collection
-        let depositRef = recipient.getCapability(KaratItems.CollectionPublicPath)!.borrow<&{NonFungibleToken.CollectionPublic}>()!
+        let depositRef = recipient.getCapability(/public/NFTCollection)
+            .borrow<&{NonFungibleToken.CollectionPublic}>()
+            ?? panic("Could not borrow a reference to the receiver's collection")
 
         // withdraw the NFT from the owner's collection
         let nft <- collectionRef.withdraw(withdrawID: withdrawID)
