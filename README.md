@@ -17,7 +17,7 @@ npm test	//this will run jtest for our tests
 flow project deploy --network=emulator
 //Token
 flow transactions send ./transactions/karat/setup_account.cdc
-flow transactions send ./transactions/karat/mint_tokens.cdc --arg Address:0xf8d6e0586b0a20c7 --arg UFix64:"10.0"
+flow transactions send ./transactions/karat/mint_tokens.cdc --arg Address:0xf8d6e0586b0a20c7 --arg UFix64:"100.0"
 flow scripts execute ./scripts/karat/get_balance.cdc --arg Address:0xf8d6e0586b0a20c7
 //NFT collection
 flow transactions send ./transactions/karatNFT/setup_account.cdc
