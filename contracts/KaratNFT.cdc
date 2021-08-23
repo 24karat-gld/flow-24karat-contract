@@ -20,9 +20,9 @@ pub contract KaratNFT: NonFungibleToken {
 
         pub var metadata: {String: String}
 
-        init(initID: UInt64) {
+        init(initID: UInt64, initMetadata: {String: String}) {
             self.id = initID
-            self.metadata = {"t":"u"}
+            self.metadata = initMetadata
         }
     }
 
@@ -121,10 +121,10 @@ pub contract KaratNFT: NonFungibleToken {
 
         // mintNFT mints a new NFT with a new ID
         // and deposit it in the recipients collection using their collection reference
-        pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}) {
+        pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, metadata: {String: String}) {
 
             // create a new NFT
-            var newNFT <- create NFT(initID: KaratNFT.totalSupply)
+            var newNFT <- create NFT(initID: KaratNFT.totalSupply, initMetadata: metadata)
 
             // deposit it in the recipient's account using their reference
             recipient.deposit(token: <-newNFT)

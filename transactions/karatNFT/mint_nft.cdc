@@ -25,6 +25,6 @@ transaction(recipient: Address) {
             ?? panic("Could not get receiver reference to the NFT Collection")
 
         // Mint the NFT and deposit it to the recipient's collection
-        self.minter.mintNFT(recipient: receiver)
+        self.minter.mintNFT(recipient: receiver, metadata:{"t":"u"})
     }
 }
