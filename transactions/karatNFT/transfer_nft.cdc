@@ -12,7 +12,7 @@ transaction(recipient: Address, withdrawID: UInt64) {
         let recipient = getAccount(recipient)
 
         // borrow a reference to the signer's NFT collection
-        let collectionRef = acct.borrow<&KaratNFT.Collection>(from: /storage/NFTCollection)
+        let collectionRef = acct.borrow<&KaratNFT.Collection>(from: KaratNFT.CollectionStoragePath)
             ?? panic("Could not borrow a reference to the owner's collection")
 
         // borrow a public reference to the receivers collection

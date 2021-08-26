@@ -14,15 +14,20 @@ pub contract KaratNFT: NonFungibleToken {
     pub event ContractInitialized()
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
-
+    pub event Minted(id: UInt64, metadata: {String: String})
+    
     pub resource NFT: NonFungibleToken.INFT {
         pub let id: UInt64
 
-        pub var metadata: {String: String}
+        access(self) let metadata: {String: String}
 
         init(initID: UInt64, initMetadata: {String: String}) {
             self.id = initID
             self.metadata = initMetadata
+        }
+
+        pub fun getMetadata(): {String: String} {
+            return self.metadata
         }
     }
 
@@ -128,7 +133,7 @@ pub contract KaratNFT: NonFungibleToken {
 
             // deposit it in the recipient's account using their reference
             recipient.deposit(token: <-newNFT)
-
+            emit Minted(id: KaratNFT.totalSupply, metadata: metadata)
             KaratNFT.totalSupply = KaratNFT.totalSupply + (1 as UInt64)
         }
     }

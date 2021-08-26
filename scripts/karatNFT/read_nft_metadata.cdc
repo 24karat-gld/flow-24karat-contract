@@ -13,5 +13,5 @@ pub fun main(account: Address, itemID: UInt64): {String:String} {
     // Borrow a reference to a specific NFT in the collection
     let nft = collection.borrowKaratNFT(id: itemID) ?? panic("No such itemID in that collection")
 
-    return nft.metadata
+    return nft.getMetadata()
 }
