@@ -11,6 +11,33 @@ npm i //frist time we need install modules
 npm test	//this will run jtest for our tests
 ```
 
+## Manual tests
+
+```
+flow project deploy --network=emulator
+//Token
+flow transactions send ./transactions/karat/setup_account.cdc
+flow transactions send ./transactions/karat/mint_tokens.cdc --arg Address:0xf8d6e0586b0a20c7 --arg UFix64:"100.0"
+flow scripts execute ./scripts/karat/get_balance.cdc --arg Address:0xf8d6e0586b0a20c7
+//NFT collection
+flow transactions send ./transactions/karatNFT/setup_account.cdc
+flow transactions send ./transactions/karatNFT/mint_nft.cdc --arg Address:0xf8d6e0586b0a20c7
+flow transactions send ./transactions/karatNFT/mint_nft.cdc --arg Address:0xf8d6e0586b0a20c7
+flow scripts execute ./scripts/karatNFT/get_collection_length.cdc --arg Address:0xf8d6e0586b0a20c7
+flow scripts execute ./scripts/karatNFT/get_nft_supply.cdc
+flow scripts execute ./scripts/karatNFT/get_collection_ids.cdc --arg Address:0xf8d6e0586b0a20c7
+flow scripts execute ./scripts/karatNFT/read_nft_metadata.cdc --arg Address:0xf8d6e0586b0a20c7 --arg UInt64:0
+//Market
+flow transactions send ./transactions/karatNFTMarket/setup_account.cdc
+flow transactions send ./transactions/karatNFTMarket/create_sale_offer.cdc --arg UInt64:0 --arg UFix64:"10.0"
+flow transactions send ./transactions/karatNFTMarket/create_sale_offer.cdc --arg UInt64:1 --arg UFix64:"20.0"
+flow scripts execute ./scripts/karatNFTMarket/get_collection_ids.cdc --arg Address:0xf8d6e0586b0a20c7
+flow scripts execute ./scripts/karatNFTMarket/get_collection_length.cdc --arg Address:0xf8d6e0586b0a20c7 --arg Address:0xf8d6e0586b0a20c7
+flow transactions send ./transactions/karatNFTMarket/remove_sale_offer.cdc --arg UInt64:0
+flow scripts execute ./scripts/karatNFTMarket/get_collection_ids.cdc --arg Address:0xf8d6e0586b0a20c7
+flow transactions send ./transactions/karatNFTMarket/buy_market_item.cdc --arg UInt64:1 --arg Address:0xf8d6e0586b0a20c7 --arg Address:0xf8d6e0586b0a20c7 --arg UFix64:"0.05"
+```
+
 ## Testnet Demo
 
 Check out the [live demo of 24Karat collection](http://24karat-develop.netlify.app),

@@ -4,7 +4,7 @@
   "description": "Smart Contract for 24karat collection on FLOW",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd lib/js;jest"
   },
   "repository": {
     "type": "git",
