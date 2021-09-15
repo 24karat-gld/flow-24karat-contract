@@ -44,7 +44,8 @@ transaction(itemID: UInt64, price: UFix64) {
             sellerItemProvider: self.karatNFTCollection,
             itemID: itemID,
             sellerPaymentReceiver: self.karatVault,
-            price: price
+            price: price,
+            receiverPublicPath: Karat.ReceiverPublicPath
         )
         self.marketCollection.insert(offer: <-offer)
     }

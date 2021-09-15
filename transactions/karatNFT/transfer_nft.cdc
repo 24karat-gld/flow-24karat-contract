@@ -28,7 +28,7 @@ transaction(recipient: Address, withdrawID: UInt64) {
             ?? panic("Could not borrow a reference to the owner's collection")
 
         // borrow a public reference to the receivers collection
-        let depositRef = recipient.getCapability(/public/NFTCollection)
+        let depositRef = recipient.getCapability(KaratNFT.CollectionPublicPath)
             .borrow<&{NonFungibleToken.CollectionPublic}>()
             ?? panic("Could not borrow a reference to the receiver's collection")
 
