@@ -56,6 +56,7 @@ pub contract KaratNFTMarket {
     //
     pub let CollectionStoragePath: StoragePath
     pub let CollectionPublicPath: PublicPath
+    pub let CollectionPrivatePath: PrivatePath
     pub let AdminStoragePath: StoragePath
 
     pub var feeReceiverAddress: Address
@@ -311,6 +312,7 @@ pub contract KaratNFTMarket {
         self.AdminStoragePath = /storage/KaratNFTMarketAdmin
         self.CollectionStoragePath = /storage/KaratNFTMarketCollection
         self.CollectionPublicPath = /public/KaratNFTMarketCollection
+        self.CollectionPrivatePath = /private/karatNFTCollectionProvider
 
         let admin <- create Admin()
         self.account.save(<-admin, to: self.AdminStoragePath)

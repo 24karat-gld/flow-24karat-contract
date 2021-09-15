@@ -22,17 +22,15 @@ transaction(itemID: UInt64, price: UFix64) {
     let marketCollection: &KaratNFTMarket.Collection
 
     prepare(signer: AuthAccount) {
-        // we need a provider capability, but one is not provided by default so we create one.
-        let KaratNFTCollectionProviderPrivatePath = /private/karatNFTCollectionProvider
 
         self.karatVault = signer.getCapability<&Karat.Vault{FungibleToken.Receiver}>(Karat.ReceiverPublicPath)!
         assert(self.karatVault.borrow() != nil, message: "Missing or mis-typed Karat receiver")
 
-        if !signer.getCapability<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>(KaratNFTCollectionProviderPrivatePath)!.check() {
-            signer.link<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>(KaratNFTCollectionProviderPrivatePath, target: KaratNFT.CollectionStoragePath)
+        if !signer.getCapability<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>(KaratNFTMarket.CollectionPrivatePath)!.check() {
+            signer.link<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>(KaratNFTMarket.CollectionPrivatePath, target: KaratNFT.CollectionStoragePath)
         }
 
-        self.karatNFTCollection = signer.getCapability<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>(KaratNFTCollectionProviderPrivatePath)!
+        self.karatNFTCollection = signer.getCapability<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>(KaratNFTMarket.CollectionPrivatePath)!
         assert(self.karatNFTCollection.borrow() != nil, message: "Missing or mis-typed KaratNFTCollection provider")
 
         self.marketCollection = signer.borrow<&KaratNFTMarket.Collection>(from: KaratNFTMarket.CollectionStoragePath)
