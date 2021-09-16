@@ -60,31 +60,33 @@ pub contract KaratNFT: NonFungibleToken {
     }
 
     pub struct Metadata {
-		pub let name: String
-		pub let artist: String
-		pub let artistAddress:Address
-		pub let description: String
-		pub let type: String
-		pub let serialId: UInt64
+        pub let name: String
+        pub let artist: String
+        pub let artistAddress:Address
+        pub let description: String
+        pub let type: String
+        pub let serialId: UInt64
         pub let royalty: UFix64
 
-		init(name: String, 
-		artist: String,
-		artistAddress:Address, 
-		description: String, 
-		type: String, 
-		serialId: UInt64,
-        royalty: UFix64) {
-			self.name=name
-			self.artist=artist
-			self.artistAddress=artistAddress
-			self.description=description
-			self.type=type
-			self.serialId=serialId
+		init(
+            name: String, 
+            artist: String,
+            artistAddress:Address, 
+            description: String, 
+            type: String, 
+            serialId: UInt64,
+            royalty: UFix64
+        ) {
+            self.name=name
+            self.artist=artist
+            self.artistAddress=artistAddress
+            self.description=description
+            self.type=type
+            self.serialId=serialId
             self.royalty=royalty
-		}
+        }
 
-	}
+    }
 
     // Collection
     // A collection of KaratNFT NFTs owned by an account
