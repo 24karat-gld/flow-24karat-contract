@@ -12,7 +12,7 @@
  
 import FungibleToken from "../../contracts/FungibleToken.cdc"
 import NonFungibleToken from "../../contracts/NonFungibleToken.cdc"
-import Karat from "../../contracts/Karat.cdc"
+import Karatv2 from "../../contracts/Karatv2.cdc"
 import KaratNFT from "../../contracts/KaratNFT.cdc"
 import KaratNFTMarket from "../../contracts/KaratNFTMarket.cdc"
 
@@ -33,7 +33,7 @@ transaction(itemID: UInt64, marketCollectionAddress: Address) {
                     ?? panic("No item with that ID")
         let price = saleItem.price
 
-        let mainVault = signer.borrow<&Karat.Vault>(from: Karat.VaultStoragePath)
+        let mainVault = signer.borrow<&Karatv2.Vault>(from: Karatv2.VaultStoragePath)
             ?? panic("Cannot borrow Token vault from acct storage")
         self.paymentVault <- mainVault.withdraw(amount: price)
 

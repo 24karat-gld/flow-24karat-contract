@@ -10,7 +10,7 @@
  * https://opensource.org/licenses/MIT.
  */
  
-import Karat from "../../contracts/Karat.cdc"
+import Karatv2 from "../../contracts/Karat.cdc"
 import FungibleToken from "../../contracts/FungibleToken.cdc"
 
 // This script returns an account's Karat balance.
@@ -18,7 +18,7 @@ import FungibleToken from "../../contracts/FungibleToken.cdc"
 pub fun main(address: Address): UFix64 {
     let account = getAccount(address)
     
-    let vaultRef = account.getCapability(Karat.BalancePublicPath)!.borrow<&Karat.Vault{FungibleToken.Balance}>()
+    let vaultRef = account.getCapability(Karatv2.BalancePublicPath)!.borrow<&Karatv2.Vault{FungibleToken.Balance}>()
         ?? panic("Could not borrow Balance reference to the Vault")
 
     return vaultRef.balance

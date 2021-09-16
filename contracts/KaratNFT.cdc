@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2021 24Karat. All rights reserved.
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of Project: 24karat flow contract (https://github.com/24karat-gld/flow-24karat-contract)
+ *
+ * This source code is licensed under the MIT License found in the
+ * LICENSE file in the root directory of this source tree or at
+ * https://opensource.org/licenses/MIT.
+ */
+
 import NonFungibleToken from "./NonFungibleToken.cdc"
 
 // KaratNFT
@@ -14,19 +26,18 @@ pub contract KaratNFT: NonFungibleToken {
     pub event ContractInitialized()
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
-    pub event Minted(id: UInt64, metadata: {String: String})
+    pub event Minted(id: UInt64, metadata: Metadata)
     
     pub resource NFT: NonFungibleToken.INFT {
         pub let id: UInt64
+        pub let metadata: Metadata
 
-        access(self) let metadata: {String: String}
-
-        init(initID: UInt64, initMetadata: {String: String}) {
+        init(initID: UInt64, initMetadata: Metadata) {
             self.id = initID
             self.metadata = initMetadata
         }
 
-        pub fun getMetadata(): {String: String} {
+        pub fun getMetadata(): Metadata {
             return self.metadata
         }
     }
@@ -46,6 +57,35 @@ pub contract KaratNFT: NonFungibleToken {
                     "Cannot borrow KaratNFT reference: The ID of the returned reference is incorrect"
             }
         }
+    }
+
+    pub struct Metadata {
+        pub let name: String
+        pub let artist: String
+        pub let artistAddress:Address
+        pub let description: String
+        pub let type: String
+        pub let serialId: UInt64
+        pub let royalty: UFix64
+
+		init(
+            name: String, 
+            artist: String,
+            artistAddress:Address, 
+            description: String, 
+            type: String, 
+            serialId: UInt64,
+            royalty: UFix64
+        ) {
+            self.name=name
+            self.artist=artist
+            self.artistAddress=artistAddress
+            self.description=description
+            self.type=type
+            self.serialId=serialId
+            self.royalty=royalty
+        }
+
     }
 
     // Collection
@@ -126,7 +166,11 @@ pub contract KaratNFT: NonFungibleToken {
 
         // mintNFT mints a new NFT with a new ID
         // and deposit it in the recipients collection using their collection reference
-        pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, metadata: {String: String}) {
+        pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, metadata: KaratNFT.Metadata) {
+
+            pre {
+                metadata.royalty <= 0.1: "royalty must lower than 0.1"
+            }
 
             // create a new NFT
             var newNFT <- create NFT(initID: KaratNFT.totalSupply, initMetadata: metadata)

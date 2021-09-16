@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2021 24Karat. All rights reserved.
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of Project: 24karat flow contract (https://github.com/24karat-gld/flow-24karat-contract)
+ *
+ * This source code is licensed under the MIT License found in the
+ * LICENSE file in the root directory of this source tree or at
+ * https://opensource.org/licenses/MIT.
+ */
+
 import KaratNFT from "./KaratNFT.cdc"
 import FungibleToken from "./FungibleToken.cdc"
 import NonFungibleToken from "./NonFungibleToken.cdc"
@@ -44,6 +56,11 @@ pub contract KaratNFTMarket {
     //
     pub let CollectionStoragePath: StoragePath
     pub let CollectionPublicPath: PublicPath
+    pub let CollectionPrivatePath: PrivatePath
+    pub let AdminStoragePath: StoragePath
+
+    pub var feeReceiverAddress: Address
+    pub var feeRate: UFix64
 
     // SaleOfferPublicView
     // An interface providing a read-only view of a SaleOffer
@@ -66,6 +83,8 @@ pub contract KaratNFTMarket {
         // The sale payment price.
         pub let price: UFix64
 
+        pub let receiverPublicPath: PublicPath
+
         // The collection containing that ID.
         access(self) let sellerItemProvider: Capability<&KaratNFT.Collection{NonFungibleToken.Provider}>
 
@@ -78,24 +97,31 @@ pub contract KaratNFTMarket {
         //
         pub fun accept(
             buyerCollection: &KaratNFT.Collection{NonFungibleToken.Receiver},
-            buyerPayment: @FungibleToken.Vault,
-            feeReceiver: Capability<&AnyResource{FungibleToken.Receiver}>,
-            feeRate: UFix64
+            buyerPayment: @FungibleToken.Vault
         ) {
             pre {
                 buyerPayment.balance == self.price: "payment does not equal offer price"
                 self.saleCompleted == false: "the sale offer has already been accepted"
             }
 
-            self.saleCompleted = true
+            let nft <- self.sellerItemProvider.borrow()!.withdraw(withdrawID: self.itemID) as! @KaratNFT.NFT
 
-            //let fee: UFix64 = 0.05
-            let feeValut <- buyerPayment.withdraw(amount: buyerPayment.balance*feeRate)
+            let fee = buyerPayment.balance*KaratNFTMarket.feeRate
+            let roy = buyerPayment.balance*nft.metadata.royalty
+
+            let feeValut <- buyerPayment.withdraw(amount: fee)
+            let feeReceiver = getAccount(KaratNFTMarket.feeReceiverAddress).getCapability<&AnyResource{FungibleToken.Receiver}>(self.receiverPublicPath).borrow() ?? panic("Cannot borrow fee receiver")
+            feeReceiver.deposit(from: <-feeValut)
+
+            let royaltyValut <- buyerPayment.withdraw(amount: roy)
+            let royaltyReceiver = getAccount(nft.metadata.artistAddress).getCapability<&AnyResource{FungibleToken.Receiver}>(self.receiverPublicPath).borrow() ?? panic("Cannot borrow fee receiver")
+            royaltyReceiver.deposit(from: <-royaltyValut)
+
             self.sellerPaymentReceiver.borrow()!.deposit(from: <-buyerPayment)
-            feeReceiver.borrow()!.deposit(from: <-feeValut)
 
-            let nft <- self.sellerItemProvider.borrow()!.withdraw(withdrawID: self.itemID)
             buyerCollection.deposit(token: <-nft)
+
+            self.saleCompleted = true
 
             emit SaleOfferAccepted(itemID: self.itemID)
         }
@@ -115,7 +141,8 @@ pub contract KaratNFTMarket {
             sellerItemProvider: Capability<&KaratNFT.Collection{NonFungibleToken.Provider}>,
             itemID: UInt64,
             sellerPaymentReceiver: Capability<&AnyResource{FungibleToken.Receiver}>,
-            price: UFix64
+            price: UFix64,
+            receiverPublicPath: PublicPath
         ) {
             pre {
                 sellerItemProvider.borrow() != nil: "Cannot borrow seller"
@@ -129,6 +156,7 @@ pub contract KaratNFTMarket {
 
             self.sellerPaymentReceiver = sellerPaymentReceiver
             self.price = price
+            self.receiverPublicPath = receiverPublicPath
 
             emit SaleOfferCreated(itemID: self.itemID, price: self.price)
         }
@@ -141,13 +169,15 @@ pub contract KaratNFTMarket {
         sellerItemProvider: Capability<&KaratNFT.Collection{NonFungibleToken.Provider}>,
         itemID: UInt64,
         sellerPaymentReceiver: Capability<&AnyResource{FungibleToken.Receiver}>,
-        price: UFix64
+        price: UFix64,
+        receiverPublicPath: PublicPath
     ): @SaleOffer {
         return <-create SaleOffer(
             sellerItemProvider: sellerItemProvider,
             itemID: itemID,
             sellerPaymentReceiver: sellerPaymentReceiver,
-            price: price
+            price: price,
+            receiverPublicPath: receiverPublicPath
         )
     }
 
@@ -160,21 +190,6 @@ pub contract KaratNFTMarket {
         pub fun remove(itemID: UInt64): @SaleOffer 
     }
 
-    // CollectionPurchaser
-    // An interface to allow purchasing items via SaleOffers in a collection.
-    // This function is also provided by CollectionPublic, it is here to support
-    // more fine-grained access to the collection for as yet unspecified future use cases.
-    //
-    pub resource interface CollectionPurchaser {
-        pub fun purchase(
-            itemID: UInt64,
-            buyerCollection: &KaratNFT.Collection{NonFungibleToken.Receiver},
-            buyerPayment: @FungibleToken.Vault,
-            feeReceiver: Capability<&AnyResource{FungibleToken.Receiver}>,
-            feeRate: UFix64
-        )
-    }
-
     // CollectionPublic
     // An interface to allow listing and borrowing SaleOffers, and purchasing items via SaleOffers in a collection.
     //
@@ -184,18 +199,16 @@ pub contract KaratNFTMarket {
         pub fun purchase(
             itemID: UInt64,
             buyerCollection: &KaratNFT.Collection{NonFungibleToken.Receiver},
-            buyerPayment: @FungibleToken.Vault,
-            feeReceiver: Capability<&AnyResource{FungibleToken.Receiver}>,
-            feeRate: UFix64
+            buyerPayment: @FungibleToken.Vault
         )
    }
 
     // Collection
     // A resource that allows its owner to manage a list of SaleOffers, and purchasers to interact with them.
     //
-    pub resource Collection : CollectionManager, CollectionPurchaser, CollectionPublic {
+    pub resource Collection : CollectionManager, CollectionPublic {
         pub var saleOffers: @{UInt64: SaleOffer}
-
+        
         // insert
         // Insert a SaleOffer into the collection, replacing one with the same itemID if present.
         //
@@ -236,16 +249,13 @@ pub contract KaratNFTMarket {
         pub fun purchase(
             itemID: UInt64,
             buyerCollection: &KaratNFT.Collection{NonFungibleToken.Receiver},
-            buyerPayment: @FungibleToken.Vault,
-            feeReceiver: Capability<&AnyResource{FungibleToken.Receiver}>,
-            feeRate: UFix64
+            buyerPayment: @FungibleToken.Vault
         ) {
             pre {
                 self.saleOffers[itemID] != nil: "SaleOffer does not exist in the collection!"
             }
             let offer <- self.remove(itemID: itemID)
-            offer.accept(buyerCollection: buyerCollection, buyerPayment: <-buyerPayment, feeReceiver: feeReceiver, feeRate: feeRate)
-            //FIXME: Is this correct? Or should we return it to the caller to dispose of?
+            offer.accept(buyerCollection: buyerCollection, buyerPayment: <-buyerPayment)
             destroy offer
         }
 
@@ -288,8 +298,34 @@ pub contract KaratNFTMarket {
         return <-create Collection()
     }
 
+    // Admin is a special authorization resource 
+    pub resource Admin {
+
+        pub fun setFeeRate(_ newRate: UFix64) {
+            KaratNFTMarket.feeRate = newRate
+        }
+
+        pub fun setFeeReceiver(_ addr: Address) {
+            KaratNFTMarket.feeReceiverAddress = addr
+        }
+
+        // createNewAdmin creates a new Admin resource
+        //
+        pub fun createNewAdmin(): @Admin {
+            return <-create Admin()
+        }
+    }
+
     init () {
+        self.AdminStoragePath = /storage/KaratNFTMarketAdmin
         self.CollectionStoragePath = /storage/KaratNFTMarketCollection
         self.CollectionPublicPath = /public/KaratNFTMarketCollection
+        self.CollectionPrivatePath = /private/karatNFTCollectionProvider
+
+        let admin <- create Admin()
+        self.account.save(<-admin, to: self.AdminStoragePath)
+
+        self.feeReceiverAddress = 0x8f4f599546e2d7eb
+        self.feeRate = 0.05
     }
 }

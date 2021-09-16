@@ -10,15 +10,11 @@
  * https://opensource.org/licenses/MIT.
  */
  
-import Karat from "../../contracts/Karat.cdc"
+import KaratNFTMarket from "../../contracts/KaratNFTMarket.cdc"
 
-// This script returns the total amount of Karat currently in existence.
+// This script returns an array of all the NFT IDs for sale 
+// in an account's SaleOffer collection.
 
-pub fun main(): UFix64 {
-
-    let supply = Karat.totalSupply
-
-    log(supply)
-
-    return supply
+pub fun main(): Address {
+    return KaratNFTMarket.feeReceiverAddress
 }

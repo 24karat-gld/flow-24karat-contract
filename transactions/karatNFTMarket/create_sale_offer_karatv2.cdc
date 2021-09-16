@@ -12,19 +12,19 @@
  
 import FungibleToken from "../../contracts/FungibleToken.cdc"
 import NonFungibleToken from "../../contracts/NonFungibleToken.cdc"
-import Karat from "../../contracts/Karat.cdc"
+import Karatv2 from "../../contracts/Karatv2.cdc"
 import KaratNFT from "../../contracts/KaratNFT.cdc"
 import KaratNFTMarket from "../../contracts/KaratNFTMarket.cdc"
 
 transaction(itemID: UInt64, price: UFix64) {
-    let karatVault: Capability<&Karat.Vault{FungibleToken.Receiver}>
+    let tokenVault: Capability<&AnyResource{FungibleToken.Receiver}>
     let karatNFTCollection: Capability<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>
     let marketCollection: &KaratNFTMarket.Collection
 
     prepare(signer: AuthAccount) {
 
-        self.karatVault = signer.getCapability<&Karat.Vault{FungibleToken.Receiver}>(Karat.ReceiverPublicPath)!
-        assert(self.karatVault.borrow() != nil, message: "Missing or mis-typed Karat receiver")
+        self.tokenVault = signer.getCapability<&AnyResource{FungibleToken.Receiver}>(Karatv2.ReceiverPublicPath)!
+        assert(self.tokenVault.borrow() != nil, message: "Missing or mis-typed FungibleToken receiver")
 
         if !signer.getCapability<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>(KaratNFTMarket.CollectionPrivatePath)!.check() {
             signer.link<&KaratNFT.Collection{NonFungibleToken.Provider, KaratNFT.KaratNFTCollectionPublic}>(KaratNFTMarket.CollectionPrivatePath, target: KaratNFT.CollectionStoragePath)
@@ -41,9 +41,9 @@ transaction(itemID: UInt64, price: UFix64) {
         let offer <- KaratNFTMarket.createSaleOffer (
             sellerItemProvider: self.karatNFTCollection,
             itemID: itemID,
-            sellerPaymentReceiver: self.karatVault,
+            sellerPaymentReceiver: self.tokenVault,
             price: price,
-            receiverPublicPath: Karat.ReceiverPublicPath
+            receiverPublicPath: Karatv2.ReceiverPublicPath
         )
         self.marketCollection.insert(offer: <-offer)
     }

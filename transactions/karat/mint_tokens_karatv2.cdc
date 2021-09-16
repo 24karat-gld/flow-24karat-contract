@@ -11,19 +11,19 @@
  */
  
 import FungibleToken from "../../contracts/FungibleToken.cdc"
-import Karat from "../../contracts/Karat.cdc"
+import Karatv2 from "../../contracts/Karatv2.cdc"
 
 transaction(recipient: Address, amount: UFix64) {
-    let tokenAdmin: &Karat.Administrator
+    let tokenAdmin: &Karatv2.Administrator
     let tokenReceiver: &{FungibleToken.Receiver}
 
     prepare(signer: AuthAccount) {
         self.tokenAdmin = signer
-        .borrow<&Karat.Administrator>(from: Karat.AdminStoragePath)
+        .borrow<&Karatv2.Administrator>(from: Karatv2.AdminStoragePath)
         ?? panic("Signer is not the token admin")
 
         self.tokenReceiver = getAccount(recipient)
-        .getCapability(Karat.ReceiverPublicPath)!
+        .getCapability(Karatv2.ReceiverPublicPath)!
         .borrow<&{FungibleToken.Receiver}>()
         ?? panic("Unable to borrow receiver reference")
     }
