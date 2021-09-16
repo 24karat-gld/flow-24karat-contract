@@ -104,16 +104,24 @@ pub contract KaratNFTMarket {
                 self.saleCompleted == false: "the sale offer has already been accepted"
             }
 
-            self.saleCompleted = true
+            let nft <- self.sellerItemProvider.borrow()!.withdraw(withdrawID: self.itemID) as! @KaratNFT.NFT
 
-            let feeValut <- buyerPayment.withdraw(amount: buyerPayment.balance*KaratNFTMarket.feeRate)
-            self.sellerPaymentReceiver.borrow()!.deposit(from: <-buyerPayment)
-            
+            let fee = buyerPayment.balance*KaratNFTMarket.feeRate
+            let roy = buyerPayment.balance*nft.metadata.royalty
+
+            let feeValut <- buyerPayment.withdraw(amount: fee)
             let feeReceiver = getAccount(KaratNFTMarket.feeReceiverAddress).getCapability<&AnyResource{FungibleToken.Receiver}>(self.receiverPublicPath).borrow() ?? panic("Cannot borrow fee receiver")
             feeReceiver.deposit(from: <-feeValut)
 
-            let nft <- self.sellerItemProvider.borrow()!.withdraw(withdrawID: self.itemID)
+            let royaltyValut <- buyerPayment.withdraw(amount: roy)
+            let royaltyReceiver = getAccount(nft.metadata.artistAddress).getCapability<&AnyResource{FungibleToken.Receiver}>(self.receiverPublicPath).borrow() ?? panic("Cannot borrow fee receiver")
+            royaltyReceiver.deposit(from: <-royaltyValut)
+
+            self.sellerPaymentReceiver.borrow()!.deposit(from: <-buyerPayment)
+
             buyerCollection.deposit(token: <-nft)
+
+            self.saleCompleted = true
 
             emit SaleOfferAccepted(itemID: self.itemID)
         }

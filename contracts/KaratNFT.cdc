@@ -66,19 +66,22 @@ pub contract KaratNFT: NonFungibleToken {
 		pub let description: String
 		pub let type: String
 		pub let serialId: UInt64
+        pub let royalty: UFix64
 
 		init(name: String, 
 		artist: String,
 		artistAddress:Address, 
 		description: String, 
 		type: String, 
-		serialId: UInt64) {
+		serialId: UInt64,
+        royalty: UFix64) {
 			self.name=name
 			self.artist=artist
 			self.artistAddress=artistAddress
 			self.description=description
 			self.type=type
 			self.serialId=serialId
+            self.royalty=royalty
 		}
 
 	}
@@ -162,6 +165,10 @@ pub contract KaratNFT: NonFungibleToken {
         // mintNFT mints a new NFT with a new ID
         // and deposit it in the recipients collection using their collection reference
         pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, metadata: KaratNFT.Metadata) {
+
+            pre {
+                metadata.royalty <= 0.1: "royalty must lower than 0.1"
+            }
 
             // create a new NFT
             var newNFT <- create NFT(initID: KaratNFT.totalSupply, initMetadata: metadata)

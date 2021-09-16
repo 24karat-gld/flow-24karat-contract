@@ -34,6 +34,18 @@
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
 			"keys": "db05bb5103695d4b42678454625237aa593afb2fed5416745670c58a64025d1e"
+		},
+		"emulator-account1": {
+			"address": "0x179b6b1cb6755e31",
+			"keys": "ba4a7c8599b0a3248e839710b74ad2b7ebdcd50e8e49a24dbb6bfb6a7a283f97"
+		},
+		"emulator-account2": {
+			"address": "0x01cf0e2f2f715450",
+			"keys": "161a6d2266d41111ba409095263b38999cd47fbd90604bc7871e54190e0b6a8a"
+		},
+		"emulator-account3": {
+			"address": "0xf3fcd2c1a78f5eee",
+			"keys": "c7ba47f0ea842c703f3166921019972e42049b97d317ccd2d23e2a3f7b92ef9f"
 		}
 	},
 	"deployments": {
