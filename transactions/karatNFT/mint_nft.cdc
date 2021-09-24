@@ -17,7 +17,7 @@ import KaratNFT from "../../contracts/KaratNFT.cdc"
 // It must be run with the account that has the minter resource
 // stored in /storage/NFTMinter
 
-transaction(recipient: Address, name: String, artist: String, description: String, royalty:UFix64, typeID: UInt64, supply: UInt8) {
+transaction(recipient: Address, name: String, artist: String, description: String, royalty:UFix64, typeID: UInt64, supply: UInt64) {
 
     // local variable for storing the minter reference
     let minter: &KaratNFT.NFTMinter
@@ -37,9 +37,9 @@ transaction(recipient: Address, name: String, artist: String, description: Strin
             ?? panic("Could not get receiver reference to the NFT Collection")
 
         // mint the NFT and deposit it to the recipient's collection
-        var i:UInt8 = 1
+        var i:UInt64 = 1
         while i <= supply {
-            let metadata=KaratNFT.Metadata( name:name, artist:artist, artistAddress:recipient, description:description, type:typeID.toString(), serialId:1, royalty:royalty )
+            let metadata=KaratNFT.Metadata( name:name, artist:artist, artistAddress:recipient, description:description, type:typeID.toString(), serialId:i, royalty:royalty )
             self.minter.mintNFT(recipient: receiver, metadata: metadata)
             i = i + 1
         }
