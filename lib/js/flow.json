@@ -9,6 +9,8 @@
 		"Karat": "./contracts/Karat.cdc",
 		"Karatv2": "./contracts/Karatv2.cdc",
 		"Sorachi": "./contracts/Sorachi.cdc",
+		"Story": "./contracts/Story.cdc",
+		"MRFRIENDLY": "./contracts/MRFRIENDLY.cdc",
 		"KaratNFT": "./contracts/KaratNFT.cdc",
 		"KaratNFTMarket": "./contracts/KaratNFTMarket.cdc",
 		"FungibleToken": {
