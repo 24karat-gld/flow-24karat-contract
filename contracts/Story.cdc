@@ -171,10 +171,10 @@ pub contract Story: FungibleToken {
 
     init() {
         // Set our named paths.
-        self.VaultStoragePath = /storage/storyVault
-        self.ReceiverPublicPath = /public/storyReceiver
-        self.BalancePublicPath = /public/storyBalance
-        self.AdminStoragePath = /storage/storyAdmin
+        self.VaultStoragePath = /storage/storyKarat24Vault
+        self.ReceiverPublicPath = /public/storyKarat24Receiver
+        self.BalancePublicPath = /public/storyKarat24Balance
+        self.AdminStoragePath = /storage/storyKarat24Admin
 
         // Initialize contract state.
         self.totalSupply = 0.0
