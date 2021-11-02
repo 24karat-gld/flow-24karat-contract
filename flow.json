@@ -11,6 +11,7 @@
 		"Sorachi": "./contracts/Sorachi.cdc",
 		"Story": "./contracts/Story.cdc",
 		"MRFRIENDLY": "./contracts/MRFRIENDLY.cdc",
+		"BYPRODUCT": "./contracts/BYPRODUCT.cdc",
 		"KaratNFT": "./contracts/KaratNFT.cdc",
 		"KaratNFTMarket": "./contracts/KaratNFTMarket.cdc",
 		"FungibleToken": {
@@ -58,6 +59,7 @@
 			  "Sorachi",
 			  "Story",
 			  "MRFRIENDLY",
+			  "BYPRODUCT",
 			  "NonFungibleToken",
 			  "KaratNFT",
 			  "KaratNFTMarket"
