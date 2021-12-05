@@ -12,6 +12,7 @@
 		"Story": "./contracts/Story.cdc",
 		"MRFRIENDLY": "./contracts/MRFRIENDLY.cdc",
 		"BYPRODUCT": "./contracts/BYPRODUCT.cdc",
+		"ACCO_SOLEIL": "./contracts/ACCO_SOLEIL.cdc",
 		"KaratNFT": "./contracts/KaratNFT.cdc",
 		"KaratNFTMarket": "./contracts/KaratNFTMarket.cdc",
 		"FungibleToken": {
@@ -60,6 +61,7 @@
 			  "Story",
 			  "MRFRIENDLY",
 			  "BYPRODUCT",
+			  "ACCO_SOLEIL",
 			  "NonFungibleToken",
 			  "KaratNFT",
 			  "KaratNFTMarket"
