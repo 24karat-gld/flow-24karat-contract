@@ -10,7 +10,7 @@
  * https://opensource.org/licenses/MIT.
  */
  
-import FungibleToken from "./FungibleToken.cdc"
+import FungibleToken from 0xf233dcee88fe0abe
 
 pub contract PEYE: FungibleToken {
     // TokensInitialized
